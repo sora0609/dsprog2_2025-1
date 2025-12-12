@@ -1,4 +1,5 @@
 import flet as ft
+import math
 
 
 class CalcButton(ft.ElevatedButton):
@@ -41,9 +42,24 @@ class CalculatorApp(ft.Container):
         self.bgcolor = ft.Colors.BLACK
         self.border_radius = ft.border_radius.all(20)
         self.padding = 20
+
+        # 課題で追加する科学計算5つ
+        sci_row = ft.Row(
+            controls=[
+                ExtraActionButton("sin", self.button_clicked),
+                ExtraActionButton("cos", self.button_clicked),
+                ExtraActionButton("tan", self.button_clicked),
+                ExtraActionButton("log", self.button_clicked),
+                ExtraActionButton("√", self.button_clicked),
+                ExtraActionButton("^", self.button_clicked),
+            ],
+            alignment="spaceBetween"
+        )
+
         self.content = ft.Column(
             controls=[
                 ft.Row(controls=[self.result], alignment="end"),
+                sci_row,
                 ft.Row(
                     controls=[
                         ExtraActionButton(text="AC", button_clicked=self.button_clicked),
@@ -86,6 +102,7 @@ class CalculatorApp(ft.Container):
             ]
         )
 
+
     def button_clicked(self, e):
         data = e.control.data
         print(f"Button clicked with data = {data}")
@@ -123,6 +140,54 @@ class CalculatorApp(ft.Container):
 
             elif float(self.result.value) < 0:
                 self.result.value = str(self.format_number(abs(float(self.result.value))))
+
+
+        # 課題で追加する科学計算
+        elif data == "sin":
+            self.result.value = str(self.format_number(
+                math.sin(math.radians(float(self.result.value)))
+            ))
+            self.reset()
+
+        elif data == "cos":
+            self.result.value = str(self.format_number(
+                math.cos(math.radians(float(self.result.value)))
+            ))
+            self.reset()
+
+        elif data == "tan":
+            self.result.value = str(self.format_number(
+                math.tan(math.radians(float(self.result.value)))
+            ))
+            self.reset()
+
+        elif data == "log":  # log10
+            try:
+                val = float(self.result.value)
+                if val <= 0:
+                    self.result.value = "Error"
+                else:
+                    self.result.value = str(self.format_number(math.log10(val)))
+            except ValueError:
+                self.result.value = "Error"
+            self.reset()
+
+        elif data == "√":
+            try:
+                val = float(self.result.value)
+                if val < 0:
+                    self.result.value = "Error"
+                else:
+                    self.result.value = str(self.format_number(math.sqrt(val)))
+            except ValueError:
+                self.result.value = "Error"
+            self.reset()
+
+        elif data == "^":
+            self.result.value = str(self.format_number(
+                float(self.result.value) ** 2
+            ))
+            self.reset()
 
         self.update()
 
